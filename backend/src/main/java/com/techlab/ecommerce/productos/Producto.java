@@ -102,6 +102,16 @@ public class Producto {
         this.activo = activo;
     }
 
+    public void descontarStock(int cantidad) {
+        if (cantidad <= 0) {
+            throw new IllegalArgumentException("La cantidad debe ser mayor a cero.");
+        }
+        if (cantidad > stock) {
+            throw new com.techlab.ecommerce.excepciones.StockInsuficienteException("Stock insuficiente para " + nombre + ".");
+        }
+        stock -= cantidad;
+    }
+
     public Categoria getCategoria() {
         return categoria;
     }

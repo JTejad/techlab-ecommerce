@@ -4,12 +4,14 @@ Interfaz web del e-commerce TechLab.
 
 ## Funcionalidades
 
-- consulta productos desde `GET /api/productos`
-- muestra categoria, precio, descripcion, imagen y stock
-- permite agregar productos al carrito usando `localStorage`
-- permite realizar pedidos con `POST /api/pedidos`
-- consulta historial de pedidos con `GET /api/pedidos`
-- muestra mensajes de error devueltos por la API
+- Consulta productos desde `GET /api/productos`.
+- Busca productos por nombre.
+- Muestra categoria, precio, descripcion, imagen y stock.
+- Permite agregar productos al carrito usando `localStorage`.
+- Permite realizar pedidos con `POST /api/pedidos`.
+- Consulta historial de pedidos con `GET /api/pedidos`.
+- Administra productos con alta, edicion y eliminacion desde la pantalla de administracion.
+- Muestra mensajes de error devueltos por el backend.
 
 ## Uso
 
@@ -19,6 +21,13 @@ Interfaz web del e-commerce TechLab.
 mvn spring-boot:run
 ```
 
-2. Abrir `frontend/index.html` en el navegador.
+2. Levantar el frontend:
 
-Si se usa Live Server, el backend ya acepta CORS desde cualquier origen durante el desarrollo.
+```bash
+cd frontend
+python3 -m http.server 5500
+```
+
+3. Abrir `http://localhost:5500` en el navegador.
+
+El backend acepta CORS desde cualquier origen durante el desarrollo.

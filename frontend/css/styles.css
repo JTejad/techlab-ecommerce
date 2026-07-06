@@ -462,3 +462,80 @@ label {
         padding: 24px;
     }
 }
+
+.admin {
+    margin-top: 24px;
+    padding: 22px;
+}
+
+.form-admin {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.form-admin .campo-ancho {
+    grid-column: 1 / -1;
+}
+
+select {
+    width: 100%;
+    border: 1px solid var(--linea);
+    background: #fff;
+    padding: 11px 12px;
+    color: var(--tinta);
+    font: inherit;
+}
+
+select:focus {
+    outline: 2px solid rgba(15, 107, 85, 0.22);
+    border-color: var(--acento);
+}
+
+.admin-productos {
+    display: grid;
+    gap: 10px;
+}
+
+.admin-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    border: 1px solid var(--linea);
+    background: #fff;
+    padding: 14px;
+}
+
+.admin-item .meta {
+    display: block;
+    margin-top: 4px;
+}
+
+.admin-acciones {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.btn.peligro,
+.btn.texto.peligro {
+    color: var(--error);
+}
+
+@media (max-width: 720px) {
+    .form-admin {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-item {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .admin-acciones {
+        justify-content: flex-start;
+    }
+}

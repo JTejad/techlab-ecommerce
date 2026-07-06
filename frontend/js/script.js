@@ -11,14 +11,23 @@ const apiStatus = document.getElementById('api-status');
 const busquedaProductos = document.getElementById('busqueda-productos');
 const btnBuscar = document.getElementById('btn-buscar');
 const btnLimpiarBusqueda = document.getElementById('btn-limpiar-busqueda');
+const formProducto = document.getElementById('form-producto');
+const mensajeAdmin = document.getElementById('mensaje-admin');
+const adminProductos = document.getElementById('admin-productos');
+const productoCategoria = document.getElementById('producto-categoria');
+const btnCancelarEdicion = document.getElementById('btn-cancelar-edicion');
+const btnGuardarProducto = document.getElementById('btn-guardar-producto');
 
 let productos = [];
+let categorias = [];
 let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
 
 document.getElementById('btn-recargar').addEventListener('click', () => cargarProductos());
 document.getElementById('btn-vaciar').addEventListener('click', vaciarCarrito);
 document.getElementById('btn-historial').addEventListener('click', cargarPedidos);
 document.getElementById('form-pedido').addEventListener('submit', realizarPedido);
+formProducto.addEventListener('submit', guardarProducto);
+btnCancelarEdicion.addEventListener('click', limpiarFormularioProducto);
 btnBuscar.addEventListener('click', buscarProductos);
 btnLimpiarBusqueda.addEventListener('click', limpiarBusqueda);
 busquedaProductos.addEventListener('keydown', event => {
@@ -29,6 +38,7 @@ busquedaProductos.addEventListener('keydown', event => {
 });
 
 window.addEventListener('DOMContentLoaded', () => {
+    cargarCategorias();
     cargarProductos();
     renderCarrito();
 });
@@ -42,10 +52,33 @@ function limpiarBusqueda() {
     cargarProductos();
 }
 
+function cargarCategorias() {
+    fetch(`${API_BASE}/categorias`)
+        .then(validarRespuesta)
+        .then(data => {
+            categorias = data;
+            renderCategorias();
+        })
+        .catch(error => {
+            mostrarMensaje(mensajeAdmin, error.message);
+        });
+}
+
+function renderCategorias() {
+    productoCategoria.innerHTML = '<option value="">Seleccionar categoria</option>';
+
+    categorias.forEach(categoria => {
+        const option = document.createElement('option');
+        option.value = categoria.id;
+        option.textContent = categoria.nombre;
+        productoCategoria.appendChild(option);
+    });
+}
+
 function cargarProductos(nombre = '') {
     mostrarMensaje(mensajeProductos, '');
     productosGrid.innerHTML = '';
-    actualizarEstadoApi('Verificando...');
+    actualizarEstadoSistema('Verificando...');
 
     const query = nombre ? `?nombre=${encodeURIComponent(nombre)}` : '';
 
@@ -53,12 +86,13 @@ function cargarProductos(nombre = '') {
         .then(validarRespuesta)
         .then(data => {
             productos = data;
-            actualizarEstadoApi('En linea');
+            actualizarEstadoSistema('Disponible');
             renderProductos(data);
+            renderAdminProductos(data);
         })
         .catch(error => {
             productos = [];
-            actualizarEstadoApi('Sin conexion');
+            actualizarEstadoSistema('Sin conexion');
             mostrarMensaje(mensajeProductos, error.message);
         });
 }
@@ -91,6 +125,111 @@ function renderProductos(lista) {
         card.querySelector('button').addEventListener('click', () => agregarAlCarrito(producto.id));
         productosGrid.appendChild(card);
     });
+}
+
+function renderAdminProductos(lista) {
+    adminProductos.innerHTML = '';
+
+    if (lista.length === 0) {
+        adminProductos.innerHTML = '<p class="estado-vacio">No hay productos cargados.</p>';
+        return;
+    }
+
+    lista.forEach(producto => {
+        const item = document.createElement('article');
+        item.className = 'admin-item';
+        item.innerHTML = `
+            <div>
+                <strong>#${producto.id} · ${producto.nombre}</strong>
+                <span class="meta">${producto.categoria?.nombre || 'Sin categoria'} · $${producto.precio.toFixed(2)} · Stock ${producto.stock}</span>
+            </div>
+            <div class="admin-acciones">
+                <button class="btn secundaria" type="button" data-accion="editar">Editar</button>
+                <button class="btn texto peligro" type="button" data-accion="eliminar">Eliminar</button>
+            </div>
+        `;
+
+        item.querySelector('[data-accion="editar"]').addEventListener('click', () => cargarProductoEnFormulario(producto));
+        item.querySelector('[data-accion="eliminar"]').addEventListener('click', () => eliminarProducto(producto));
+        adminProductos.appendChild(item);
+    });
+}
+
+function cargarProductoEnFormulario(producto) {
+    document.getElementById('producto-id').value = producto.id;
+    document.getElementById('producto-nombre').value = producto.nombre;
+    document.getElementById('producto-descripcion').value = producto.descripcion || '';
+    document.getElementById('producto-precio').value = producto.precio;
+    document.getElementById('producto-stock').value = producto.stock;
+    document.getElementById('producto-imagen').value = producto.imagenUrl || '';
+    productoCategoria.value = producto.categoria?.id || '';
+    btnGuardarProducto.textContent = 'Actualizar producto';
+    mostrarMensaje(mensajeAdmin, `Editando producto #${producto.id}.`, true);
+}
+
+function guardarProducto(event) {
+    event.preventDefault();
+    mostrarMensaje(mensajeAdmin, '');
+
+    const id = document.getElementById('producto-id').value;
+    const categoriaId = Number(productoCategoria.value);
+    const categoriaSeleccionada = categorias.find(categoria => categoria.id === categoriaId);
+    const producto = {
+        nombre: document.getElementById('producto-nombre').value.trim(),
+        descripcion: document.getElementById('producto-descripcion').value.trim(),
+        precio: Number(document.getElementById('producto-precio').value),
+        stock: Number(document.getElementById('producto-stock').value),
+        imagenUrl: document.getElementById('producto-imagen').value.trim(),
+        categoria: categoriaSeleccionada
+    };
+
+    const url = id ? `${API_BASE}/productos/${id}` : `${API_BASE}/productos`;
+    const method = id ? 'PUT' : 'POST';
+
+    fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(producto)
+    })
+        .then(validarRespuesta)
+        .then(() => {
+            mostrarMensaje(mensajeAdmin, id ? 'Producto actualizado correctamente.' : 'Producto creado correctamente.', true);
+            limpiarFormularioProducto(false);
+            cargarProductos(busquedaProductos.value.trim());
+        })
+        .catch(error => {
+            mostrarMensaje(mensajeAdmin, error.message);
+        });
+}
+
+function eliminarProducto(producto) {
+    const confirma = confirm(`Eliminar ${producto.nombre} del catalogo?`);
+
+    if (!confirma) {
+        return;
+    }
+
+    fetch(`${API_BASE}/productos/${producto.id}`, { method: 'DELETE' })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('No se pudo eliminar el producto.');
+            }
+            mostrarMensaje(mensajeAdmin, 'Producto eliminado del catalogo.', true);
+            cargarProductos(busquedaProductos.value.trim());
+        })
+        .catch(error => {
+            mostrarMensaje(mensajeAdmin, error.message);
+        });
+}
+
+function limpiarFormularioProducto(mostrarConfirmacion = true) {
+    formProducto.reset();
+    document.getElementById('producto-id').value = '';
+    btnGuardarProducto.textContent = 'Guardar producto';
+
+    if (mostrarConfirmacion) {
+        mostrarMensaje(mensajeAdmin, 'Formulario limpio.', true);
+    }
 }
 
 function agregarAlCarrito(productoId) {
@@ -249,7 +388,7 @@ function mostrarMensaje(elemento, texto, ok = false) {
     elemento.classList.toggle('ok', ok);
 }
 
-function actualizarEstadoApi(texto) {
+function actualizarEstadoSistema(texto) {
     apiStatus.textContent = texto;
 }
 
@@ -258,7 +397,7 @@ function validarRespuesta(response) {
         return response.json()
             .catch(() => ({}))
             .then(error => {
-                throw new Error(error.error || 'Ocurrio un error al comunicarse con la API.');
+                throw new Error(error.error || 'Ocurrio un error al comunicarse con el sistema.');
             });
     }
 

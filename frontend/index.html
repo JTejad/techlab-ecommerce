@@ -15,12 +15,13 @@
             <span class="brand-mark">S</span>
             <span>
                 <strong>Sibelius Gourmet</strong>
-                <small>by TechLab</small>
+                <small>Gestion de tienda</small>
             </span>
         </a>
         <nav class="nav">
             <a href="#productos">Productos</a>
             <a href="#carrito">Carrito</a>
+            <a href="#admin">Administracion</a>
             <a href="#historial">Pedidos</a>
         </nav>
     </header>
@@ -28,12 +29,12 @@
     <main>
         <section class="hero">
             <div class="hero-copy">
-                <p class="eyebrow">Catalogo gourmet conectado a Spring Boot</p>
+                <p class="eyebrow">Sistema de gestion para e-commerce</p>
                 <h1>Cafes, tes y accesorios con stock real.</h1>
-                <p>Una tienda simple para consultar productos, armar un carrito y registrar pedidos contra la API del proyecto final.</p>
+                <p>Consulta productos, arma pedidos, controla el stock y revisa el historial de ventas desde una misma pantalla.</p>
             </div>
             <div class="hero-panel">
-                <span>API</span>
+                <span>Estado del sistema</span>
                 <strong id="api-status">Verificando...</strong>
             </div>
         </section>
@@ -88,6 +89,48 @@
 
                 <p id="mensaje-pedido" class="mensaje"></p>
             </aside>
+        </section>
+
+        <section id="admin" class="admin panel">
+            <div class="section-header">
+                <div>
+                    <p class="eyebrow">Administracion</p>
+                    <h2>Gestionar productos</h2>
+                </div>
+                <button id="btn-cancelar-edicion" class="btn texto" type="button">Limpiar formulario</button>
+            </div>
+
+            <form id="form-producto" class="form-admin">
+                <input type="hidden" id="producto-id">
+                <label>
+                    Nombre
+                    <input type="text" id="producto-nombre" placeholder="Cafe Colombia" required>
+                </label>
+                <label>
+                    Descripcion
+                    <input type="text" id="producto-descripcion" placeholder="Cafe tostado de origen" required>
+                </label>
+                <label>
+                    Precio
+                    <input type="number" id="producto-precio" min="0" step="0.01" placeholder="8500" required>
+                </label>
+                <label>
+                    Stock
+                    <input type="number" id="producto-stock" min="0" step="1" placeholder="20" required>
+                </label>
+                <label>
+                    Categoria
+                    <select id="producto-categoria" required></select>
+                </label>
+                <label class="campo-ancho">
+                    URL de imagen
+                    <input type="url" id="producto-imagen" placeholder="https://..." required>
+                </label>
+                <button id="btn-guardar-producto" class="btn principal" type="submit">Guardar producto</button>
+            </form>
+
+            <p id="mensaje-admin" class="mensaje"></p>
+            <div id="admin-productos" class="admin-productos"></div>
         </section>
 
         <section id="historial" class="historial panel">

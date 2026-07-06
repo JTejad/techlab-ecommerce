@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechLab E-commerce</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header class="topbar">
+        <div>
+            <p class="marca-secundaria">Sibelius Gourmet</p>
+            <h1>TechLab E-commerce</h1>
+        </div>
+        <nav class="nav">
+            <a href="#productos">Productos</a>
+            <a href="#carrito">Carrito</a>
+            <a href="#historial">Pedidos</a>
+        </nav>
+    </header>
+
+    <main class="layout">
+        <section id="productos" class="catalogo">
+            <div class="section-header">
+                <div>
+                    <p class="eyebrow">Catalogo conectado a la API</p>
+                    <h2>Productos disponibles</h2>
+                </div>
+                <button id="btn-recargar" class="btn principal">Actualizar</button>
+            </div>
+
+            <p id="mensaje-productos" class="mensaje"></p>
+            <div id="productos-grid" class="productos-grid"></div>
+        </section>
+
+        <aside id="carrito" class="panel-carrito">
+            <div class="section-header compacta">
+                <div>
+                    <p class="eyebrow">Compra actual</p>
+                    <h2>Carrito</h2>
+                </div>
+                <span id="contador-carrito" class="contador">0</span>
+            </div>
+
+            <div id="carrito-items" class="carrito-items"></div>
+            <div class="total-linea">
+                <span>Total</span>
+                <strong>$<span id="carrito-total">0</span></strong>
+            </div>
+
+            <form id="form-pedido" class="form-pedido">
+                <label>
+                    Nombre
+                    <input type="text" id="nombre-cliente" required>
+                </label>
+                <label>
+                    Email
+                    <input type="email" id="email-cliente" required>
+                </label>
+                <button class="btn principal" type="submit">Realizar pedido</button>
+                <button class="btn secundaria" type="button" id="btn-vaciar">Vaciar carrito</button>
+            </form>
+
+            <p id="mensaje-pedido" class="mensaje"></p>
+        </aside>
+
+        <section id="historial" class="historial">
+            <div class="section-header">
+                <div>
+                    <p class="eyebrow">Pedidos registrados</p>
+                    <h2>Historial</h2>
+                </div>
+                <button id="btn-historial" class="btn secundaria">Consultar</button>
+            </div>
+            <div id="pedidos-lista" class="pedidos-lista"></div>
+        </section>
+    </main>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

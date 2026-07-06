@@ -1,0 +1,250 @@
+:root {
+    --fondo: #f6f3ec;
+    --texto: #1d1c1a;
+    --muted: #69645c;
+    --linea: #24211d;
+    --panel: #ffffff;
+    --acento: #146c5d;
+    --acento-oscuro: #0f5146;
+    --alerta: #9f2f22;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Georgia, 'Times New Roman', serif;
+    background: var(--fondo);
+    color: var(--texto);
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    padding: 24px 32px;
+    border-bottom: 2px solid var(--linea);
+    background: #fffaf0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.marca-secundaria,
+.eyebrow {
+    margin: 0 0 6px;
+    color: var(--muted);
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0;
+}
+
+h1,
+h2,
+h3,
+p {
+    margin-top: 0;
+}
+
+h1 {
+    margin-bottom: 0;
+    font-size: 32px;
+}
+
+.nav {
+    display: flex;
+    gap: 14px;
+}
+
+.nav a {
+    color: var(--texto);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+}
+
+.nav a:hover {
+    border-bottom-color: var(--texto);
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 24px;
+    padding: 28px 32px;
+}
+
+.catalogo,
+.historial,
+.panel-carrito {
+    background: var(--panel);
+    border: 1px solid var(--linea);
+    padding: 20px;
+}
+
+.catalogo {
+    min-height: 560px;
+}
+
+.historial {
+    grid-column: 1 / -1;
+}
+
+.section-header {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.section-header.compacta {
+    align-items: center;
+}
+
+.productos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.producto-card,
+.pedido-card,
+.carrito-item {
+    border: 1px solid var(--linea);
+    background: #fff;
+}
+
+.producto-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-bottom: 1px solid var(--linea);
+}
+
+.producto-card .contenido,
+.pedido-card,
+.carrito-item {
+    padding: 14px;
+}
+
+.producto-card h3 {
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+.meta {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.precio {
+    font-size: 22px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.btn {
+    border: 1px solid var(--linea);
+    padding: 10px 12px;
+    cursor: pointer;
+    font: inherit;
+}
+
+.btn.principal {
+    background: var(--acento);
+    color: white;
+}
+
+.btn.principal:hover {
+    background: var(--acento-oscuro);
+}
+
+.btn.secundaria {
+    background: white;
+    color: var(--texto);
+}
+
+.contador {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 34px;
+    height: 34px;
+    border: 1px solid var(--linea);
+    background: var(--texto);
+    color: white;
+}
+
+.carrito-items {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.carrito-item {
+    display: grid;
+    gap: 8px;
+}
+
+.item-acciones {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.total-linea {
+    display: flex;
+    justify-content: space-between;
+    border-top: 2px solid var(--linea);
+    padding-top: 14px;
+    margin-bottom: 16px;
+    font-size: 20px;
+}
+
+.form-pedido {
+    display: grid;
+    gap: 12px;
+}
+
+label {
+    display: grid;
+    gap: 6px;
+    color: var(--muted);
+}
+
+input {
+    border: 1px solid var(--linea);
+    padding: 10px;
+    font: inherit;
+}
+
+.mensaje {
+    min-height: 22px;
+    color: var(--alerta);
+}
+
+.pedidos-lista {
+    display: grid;
+    gap: 12px;
+}
+
+@media (max-width: 900px) {
+    .topbar,
+    .layout {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+    .layout {
+        grid-template-columns: 1fr;
+    }
+
+    .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

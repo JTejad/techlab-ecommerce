@@ -17,19 +17,32 @@ const adminProductos = document.getElementById('admin-productos');
 const productoCategoria = document.getElementById('producto-categoria');
 const btnCancelarEdicion = document.getElementById('btn-cancelar-edicion');
 const btnGuardarProducto = document.getElementById('btn-guardar-producto');
+const formRegistro = document.getElementById('form-registro');
+const formLogin = document.getElementById('form-login');
+const mensajeUsuario = document.getElementById('mensaje-usuario');
+const usuarioActivo = document.getElementById('usuario-activo');
+const btnCerrarSesion = document.getElementById('btn-cerrar-sesion');
+const productoImagen = document.getElementById('producto-imagen');
+const productoImagenPreview = document.getElementById('producto-imagen-preview');
 
 let productos = [];
 let categorias = [];
 let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+let imagenProductoActual = '';
+let usuarioActual = JSON.parse(localStorage.getItem('usuarioActual')) || null;
 
 document.getElementById('btn-recargar').addEventListener('click', () => cargarProductos());
 document.getElementById('btn-vaciar').addEventListener('click', vaciarCarrito);
 document.getElementById('btn-historial').addEventListener('click', cargarPedidos);
 document.getElementById('form-pedido').addEventListener('submit', realizarPedido);
 formProducto.addEventListener('submit', guardarProducto);
+formRegistro.addEventListener('submit', registrarUsuario);
+formLogin.addEventListener('submit', loginUsuario);
+btnCerrarSesion.addEventListener('click', cerrarSesion);
 btnCancelarEdicion.addEventListener('click', limpiarFormularioProducto);
 btnBuscar.addEventListener('click', buscarProductos);
 btnLimpiarBusqueda.addEventListener('click', limpiarBusqueda);
+productoImagen.addEventListener('change', prepararImagenProducto);
 busquedaProductos.addEventListener('keydown', event => {
     if (event.key === 'Enter') {
         event.preventDefault();
@@ -41,7 +54,80 @@ window.addEventListener('DOMContentLoaded', () => {
     cargarCategorias();
     cargarProductos();
     renderCarrito();
+    renderUsuarioActual();
 });
+
+
+function registrarUsuario(event) {
+    event.preventDefault();
+    mostrarMensaje(mensajeUsuario, '');
+
+    const request = {
+        nombre: document.getElementById('registro-nombre').value.trim(),
+        email: document.getElementById('registro-email').value.trim(),
+        password: document.getElementById('registro-password').value
+    };
+
+    fetch(`${API_BASE}/usuarios/registro`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(request)
+    })
+        .then(validarRespuesta)
+        .then(usuario => {
+            iniciarSesionLocal(usuario);
+            formRegistro.reset();
+            mostrarMensaje(mensajeUsuario, 'Cuenta creada correctamente.', true);
+        })
+        .catch(error => mostrarMensaje(mensajeUsuario, error.message));
+}
+
+function loginUsuario(event) {
+    event.preventDefault();
+    mostrarMensaje(mensajeUsuario, '');
+
+    const request = {
+        email: document.getElementById('login-email').value.trim(),
+        password: document.getElementById('login-password').value
+    };
+
+    fetch(`${API_BASE}/usuarios/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(request)
+    })
+        .then(validarRespuesta)
+        .then(usuario => {
+            iniciarSesionLocal(usuario);
+            formLogin.reset();
+            mostrarMensaje(mensajeUsuario, 'Sesion iniciada correctamente.', true);
+        })
+        .catch(error => mostrarMensaje(mensajeUsuario, error.message));
+}
+
+function iniciarSesionLocal(usuario) {
+    usuarioActual = usuario;
+    localStorage.setItem('usuarioActual', JSON.stringify(usuario));
+    renderUsuarioActual();
+}
+
+function cerrarSesion() {
+    usuarioActual = null;
+    localStorage.removeItem('usuarioActual');
+    renderUsuarioActual();
+    mostrarMensaje(mensajeUsuario, 'Sesion cerrada.', true);
+}
+
+function renderUsuarioActual() {
+    if (!usuarioActual) {
+        usuarioActivo.textContent = 'No hay usuario conectado.';
+        return;
+    }
+
+    usuarioActivo.innerHTML = `<strong>${usuarioActual.nombre}</strong><span>${usuarioActual.email}</span>`;
+    document.getElementById('nombre-cliente').value = usuarioActual.nombre;
+    document.getElementById('email-cliente').value = usuarioActual.email;
+}
 
 function buscarProductos() {
     cargarProductos(busquedaProductos.value.trim());
@@ -161,7 +247,8 @@ function cargarProductoEnFormulario(producto) {
     document.getElementById('producto-descripcion').value = producto.descripcion || '';
     document.getElementById('producto-precio').value = producto.precio;
     document.getElementById('producto-stock').value = producto.stock;
-    document.getElementById('producto-imagen').value = producto.imagenUrl || '';
+    imagenProductoActual = producto.imagenUrl || '';
+    actualizarPreviewImagen(imagenProductoActual);
     productoCategoria.value = producto.categoria?.id || '';
     btnGuardarProducto.textContent = 'Actualizar producto';
     mostrarMensaje(mensajeAdmin, `Editando producto #${producto.id}.`, true);
@@ -179,9 +266,14 @@ function guardarProducto(event) {
         descripcion: document.getElementById('producto-descripcion').value.trim(),
         precio: Number(document.getElementById('producto-precio').value),
         stock: Number(document.getElementById('producto-stock').value),
-        imagenUrl: document.getElementById('producto-imagen').value.trim(),
+        imagenUrl: imagenProductoActual,
         categoria: categoriaSeleccionada
     };
+
+    if (!imagenProductoActual) {
+        mostrarMensaje(mensajeAdmin, 'Selecciona una imagen para el producto.');
+        return;
+    }
 
     const url = id ? `${API_BASE}/productos/${id}` : `${API_BASE}/productos`;
     const method = id ? 'PUT' : 'POST';
@@ -225,11 +317,44 @@ function eliminarProducto(producto) {
 function limpiarFormularioProducto(mostrarConfirmacion = true) {
     formProducto.reset();
     document.getElementById('producto-id').value = '';
+    imagenProductoActual = '';
+    actualizarPreviewImagen('');
     btnGuardarProducto.textContent = 'Guardar producto';
 
     if (mostrarConfirmacion) {
         mostrarMensaje(mensajeAdmin, 'Formulario limpio.', true);
     }
+}
+
+
+function prepararImagenProducto() {
+    const archivo = productoImagen.files[0];
+
+    if (!archivo) {
+        return;
+    }
+
+    if (!archivo.type.startsWith('image/')) {
+        mostrarMensaje(mensajeAdmin, 'El archivo seleccionado debe ser una imagen.');
+        productoImagen.value = '';
+        return;
+    }
+
+    const lector = new FileReader();
+    lector.addEventListener('load', () => {
+        imagenProductoActual = lector.result;
+        actualizarPreviewImagen(imagenProductoActual);
+    });
+    lector.readAsDataURL(archivo);
+}
+
+function actualizarPreviewImagen(src) {
+    if (!src) {
+        productoImagenPreview.innerHTML = '<span>Sin imagen seleccionada</span>';
+        return;
+    }
+
+    productoImagenPreview.innerHTML = `<img src="${src}" alt="Vista previa del producto">`;
 }
 
 function agregarAlCarrito(productoId) {

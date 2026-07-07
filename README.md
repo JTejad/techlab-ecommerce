@@ -14,6 +14,7 @@ Sistema de gestion para un e-commerce desarrollado con Java, Spring Boot, JPA y 
 - Carrito de compras con `localStorage`.
 - Creacion de pedidos con validacion de stock.
 - Descuento automatico de stock al confirmar un pedido.
+- Registro e inicio de sesion simple de usuarios.
 - Historial de pedidos por email.
 - Estados de pedido.
 - Manejo de errores y excepcion personalizada para stock insuficiente.
@@ -67,3 +68,5 @@ Abrir `http://localhost:5500` en el navegador.
 - `GET /api/pedidos`
 - `POST /api/pedidos`
 - `PUT /api/pedidos/{id}/estado?estado=PENDIENTE`
+- `POST /api/usuarios/registro`
+- `POST /api/usuarios/login`

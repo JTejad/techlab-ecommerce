@@ -19,6 +19,7 @@
             </span>
         </a>
         <nav class="nav">
+            <a href="#cuenta">Cuenta</a>
             <a href="#productos">Productos</a>
             <a href="#carrito">Carrito</a>
             <a href="#admin">Administracion</a>
@@ -37,6 +38,53 @@
                 <span>Estado del sistema</span>
                 <strong id="api-status">Verificando...</strong>
             </div>
+        </section>
+
+
+        <section id="cuenta" class="cuenta panel">
+            <div class="section-header">
+                <div>
+                    <p class="eyebrow">Usuario</p>
+                    <h2>Cuenta de cliente</h2>
+                </div>
+                <button id="btn-cerrar-sesion" class="btn texto" type="button">Salir</button>
+            </div>
+
+            <div id="usuario-activo" class="usuario-activo estado-vacio">No hay usuario conectado.</div>
+
+            <div class="cuenta-grid">
+                <form id="form-registro" class="form-cuenta">
+                    <h3>Crear cuenta</h3>
+                    <label>
+                        Nombre
+                        <input type="text" id="registro-nombre" placeholder="Juan Perez" required>
+                    </label>
+                    <label>
+                        Email
+                        <input type="email" id="registro-email" placeholder="juan@email.com" required>
+                    </label>
+                    <label>
+                        Contrasena
+                        <input type="password" id="registro-password" placeholder="Minimo 4 caracteres" required>
+                    </label>
+                    <button class="btn principal" type="submit">Registrarme</button>
+                </form>
+
+                <form id="form-login" class="form-cuenta">
+                    <h3>Iniciar sesion</h3>
+                    <label>
+                        Email
+                        <input type="email" id="login-email" placeholder="juan@email.com" required>
+                    </label>
+                    <label>
+                        Contrasena
+                        <input type="password" id="login-password" placeholder="Tu contrasena" required>
+                    </label>
+                    <button class="btn secundaria" type="submit">Entrar</button>
+                </form>
+            </div>
+
+            <p id="mensaje-usuario" class="mensaje"></p>
         </section>
 
         <section class="layout">
@@ -123,9 +171,12 @@
                     <select id="producto-categoria" required></select>
                 </label>
                 <label class="campo-ancho">
-                    URL de imagen
-                    <input type="url" id="producto-imagen" placeholder="https://..." required>
+                    Imagen
+                    <input type="file" id="producto-imagen" accept="image/*">
                 </label>
+                <div class="campo-ancho imagen-preview" id="producto-imagen-preview">
+                    <span>Sin imagen seleccionada</span>
+                </div>
                 <button id="btn-guardar-producto" class="btn principal" type="submit">Guardar producto</button>
             </form>
 

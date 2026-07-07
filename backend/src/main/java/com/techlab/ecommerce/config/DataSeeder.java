@@ -7,19 +7,25 @@ import com.techlab.ecommerce.categorias.Categoria;
 import com.techlab.ecommerce.categorias.CategoriaRepository;
 import com.techlab.ecommerce.productos.Producto;
 import com.techlab.ecommerce.productos.ProductoRepository;
+import com.techlab.ecommerce.usuarios.UsuarioService;
 
 @Component
 public class DataSeeder implements CommandLineRunner {
     private final CategoriaRepository categoriaRepository;
     private final ProductoRepository productoRepository;
+    private final UsuarioService usuarioService;
 
-    public DataSeeder(CategoriaRepository categoriaRepository, ProductoRepository productoRepository) {
+    public DataSeeder(CategoriaRepository categoriaRepository, ProductoRepository productoRepository,
+            UsuarioService usuarioService) {
         this.categoriaRepository = categoriaRepository;
         this.productoRepository = productoRepository;
+        this.usuarioService = usuarioService;
     }
 
     @Override
     public void run(String... args) {
+        usuarioService.crearAdminInicial("Administrador", "admin@techlab.com", "admin1234");
+
         if (productoRepository.count() > 0) {
             return;
         }

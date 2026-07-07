@@ -70,3 +70,13 @@ Abrir `http://localhost:5500` en el navegador.
 - `PUT /api/pedidos/{id}/estado?estado=PENDIENTE`
 - `POST /api/usuarios/registro`
 - `POST /api/usuarios/login`
+
+
+## Usuario administrador
+
+Al iniciar la aplicacion se crea un administrador de prueba si no existe:
+
+- Email: `admin@techlab.com`
+- Contrasena: `admin1234`
+
+La seccion de administracion del frontend solo se muestra cuando inicia sesion un usuario administrador.

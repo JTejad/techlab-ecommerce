@@ -30,6 +30,19 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
+    public Usuario crearAdminInicial(String nombre, String email, String password) {
+        if (usuarioRepository.existsByEmailIgnoreCase(email)) {
+            return usuarioRepository.findByEmailIgnoreCase(email).orElse(null);
+        }
+
+        Usuario usuario = new Usuario();
+        usuario.setNombre(nombre);
+        usuario.setEmail(email.trim().toLowerCase());
+        usuario.setPasswordHash(hashearPassword(password));
+        usuario.setAdministrador(true);
+        return usuarioRepository.save(usuario);
+    }
+
     public Usuario login(LoginUsuarioRequest request) {
         if (request.getEmail() == null || request.getPassword() == null) {
             throw new IllegalArgumentException("Email y contrasena son obligatorios.");

@@ -22,6 +22,12 @@ const formLogin = document.getElementById('form-login');
 const mensajeUsuario = document.getElementById('mensaje-usuario');
 const usuarioActivo = document.getElementById('usuario-activo');
 const btnCerrarSesion = document.getElementById('btn-cerrar-sesion');
+const btnAbrirLogin = document.getElementById('btn-abrir-login');
+const btnAbrirRegistro = document.getElementById('btn-abrir-registro');
+const modalLogin = document.getElementById('modal-login');
+const modalRegistro = document.getElementById('modal-registro');
+const navAdmin = document.getElementById('nav-admin');
+const seccionAdmin = document.getElementById('admin');
 const productoImagen = document.getElementById('producto-imagen');
 const productoImagenPreview = document.getElementById('producto-imagen-preview');
 
@@ -39,6 +45,18 @@ formProducto.addEventListener('submit', guardarProducto);
 formRegistro.addEventListener('submit', registrarUsuario);
 formLogin.addEventListener('submit', loginUsuario);
 btnCerrarSesion.addEventListener('click', cerrarSesion);
+btnAbrirLogin.addEventListener('click', () => abrirModal(modalLogin));
+btnAbrirRegistro.addEventListener('click', () => abrirModal(modalRegistro));
+document.querySelectorAll('[data-cerrar-modal]').forEach(boton => {
+    boton.addEventListener('click', () => cerrarModal(document.getElementById(boton.dataset.cerrarModal)));
+});
+document.querySelectorAll('.modal').forEach(modal => {
+    modal.addEventListener('click', event => {
+        if (event.target === modal) {
+            cerrarModal(modal);
+        }
+    });
+});
 btnCancelarEdicion.addEventListener('click', limpiarFormularioProducto);
 btnBuscar.addEventListener('click', buscarProductos);
 btnLimpiarBusqueda.addEventListener('click', limpiarBusqueda);
@@ -77,6 +95,7 @@ function registrarUsuario(event) {
         .then(usuario => {
             iniciarSesionLocal(usuario);
             formRegistro.reset();
+            cerrarModal(modalRegistro);
             mostrarMensaje(mensajeUsuario, 'Cuenta creada correctamente.', true);
         })
         .catch(error => mostrarMensaje(mensajeUsuario, error.message));
@@ -100,6 +119,7 @@ function loginUsuario(event) {
         .then(usuario => {
             iniciarSesionLocal(usuario);
             formLogin.reset();
+            cerrarModal(modalLogin);
             mostrarMensaje(mensajeUsuario, 'Sesion iniciada correctamente.', true);
         })
         .catch(error => mostrarMensaje(mensajeUsuario, error.message));
@@ -119,14 +139,30 @@ function cerrarSesion() {
 }
 
 function renderUsuarioActual() {
+    const esAdmin = Boolean(usuarioActual?.administrador);
+    navAdmin.hidden = !esAdmin;
+    seccionAdmin.hidden = !esAdmin;
+    btnCerrarSesion.hidden = !usuarioActual;
+    btnAbrirLogin.hidden = Boolean(usuarioActual);
+    
     if (!usuarioActual) {
-        usuarioActivo.textContent = 'No hay usuario conectado.';
+        usuarioActivo.textContent = 'Invitado';
         return;
     }
 
-    usuarioActivo.innerHTML = `<strong>${usuarioActual.nombre}</strong><span>${usuarioActual.email}</span>`;
+    usuarioActivo.innerHTML = `<strong>${usuarioActual.nombre}</strong><span>${esAdmin ? 'Admin' : 'Cliente'}</span>`;
     document.getElementById('nombre-cliente').value = usuarioActual.nombre;
     document.getElementById('email-cliente').value = usuarioActual.email;
+}
+
+function abrirModal(modal) {
+    modal.classList.add('abierto');
+    modal.setAttribute('aria-hidden', 'false');
+}
+
+function cerrarModal(modal) {
+    modal.classList.remove('abierto');
+    modal.setAttribute('aria-hidden', 'true');
 }
 
 function buscarProductos() {

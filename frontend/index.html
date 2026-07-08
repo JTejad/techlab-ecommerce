@@ -18,13 +18,19 @@
                 <small>Gestion de tienda</small>
             </span>
         </a>
-        <nav class="nav">
-            <a href="#cuenta">Cuenta</a>
-            <a href="#productos">Productos</a>
-            <a href="#carrito">Carrito</a>
-            <a href="#admin">Administracion</a>
-            <a href="#historial">Pedidos</a>
-        </nav>
+        <div class="header-actions">
+            <nav class="nav">
+                <a href="#productos">Productos</a>
+                <a href="#carrito">Carrito</a>
+                <a id="nav-admin" href="#admin">Administracion</a>
+                <a href="#historial">Pedidos</a>
+            </nav>
+            <div class="sesion-nav">
+                <span id="usuario-activo" class="usuario-activo">Invitado</span>
+                <button id="btn-abrir-login" class="btn secundaria" type="button">Iniciar sesion</button>
+                <button id="btn-cerrar-sesion" class="btn texto" type="button">Salir</button>
+            </div>
+        </div>
     </header>
 
     <main>
@@ -41,51 +47,7 @@
         </section>
 
 
-        <section id="cuenta" class="cuenta panel">
-            <div class="section-header">
-                <div>
-                    <p class="eyebrow">Usuario</p>
-                    <h2>Cuenta de cliente</h2>
-                </div>
-                <button id="btn-cerrar-sesion" class="btn texto" type="button">Salir</button>
-            </div>
-
-            <div id="usuario-activo" class="usuario-activo estado-vacio">No hay usuario conectado.</div>
-
-            <div class="cuenta-grid">
-                <form id="form-registro" class="form-cuenta">
-                    <h3>Crear cuenta</h3>
-                    <label>
-                        Nombre
-                        <input type="text" id="registro-nombre" placeholder="Juan Perez" required>
-                    </label>
-                    <label>
-                        Email
-                        <input type="email" id="registro-email" placeholder="juan@email.com" required>
-                    </label>
-                    <label>
-                        Contrasena
-                        <input type="password" id="registro-password" placeholder="Minimo 4 caracteres" required>
-                    </label>
-                    <button class="btn principal" type="submit">Registrarme</button>
-                </form>
-
-                <form id="form-login" class="form-cuenta">
-                    <h3>Iniciar sesion</h3>
-                    <label>
-                        Email
-                        <input type="email" id="login-email" placeholder="juan@email.com" required>
-                    </label>
-                    <label>
-                        Contrasena
-                        <input type="password" id="login-password" placeholder="Tu contrasena" required>
-                    </label>
-                    <button class="btn secundaria" type="submit">Entrar</button>
-                </form>
-            </div>
-
-            <p id="mensaje-usuario" class="mensaje"></p>
-        </section>
+        <p id="mensaje-usuario" class="mensaje mensaje-global"></p>
 
         <section class="layout">
             <section id="productos" class="catalogo panel">
@@ -195,6 +157,52 @@
             <div id="pedidos-lista" class="pedidos-lista"></div>
         </section>
     </main>
+
+
+    <div id="modal-login" class="modal" aria-hidden="true">
+        <div class="modal-contenido">
+            <button class="modal-cerrar" type="button" data-cerrar-modal="modal-login">Cerrar</button>
+            <p class="eyebrow">Acceso</p>
+            <h2>Iniciar sesion</h2>
+            <p class="modal-ayuda">Usa tu email para recuperar tus datos y consultar pedidos. Admin de prueba: admin@techlab.com / admin1234.</p>
+            <form id="form-login" class="form-cuenta">
+                <label>
+                    Email
+                    <input type="email" id="login-email" placeholder="juan@email.com" required>
+                </label>
+                <label>
+                    Contrasena
+                    <input type="password" id="login-password" placeholder="Tu contrasena" required>
+                </label>
+                <button class="btn principal" type="submit">Entrar</button>
+            </form>
+            <p class="modal-alternativa">No tenes cuenta? <button id="btn-abrir-registro" type="button">Registrate</button></p>
+        </div>
+    </div>
+
+    <div id="modal-registro" class="modal" aria-hidden="true">
+        <div class="modal-contenido">
+            <button class="modal-cerrar" type="button" data-cerrar-modal="modal-registro">Cerrar</button>
+            <p class="eyebrow">Nueva cuenta</p>
+            <h2>Crear cuenta</h2>
+            <p class="modal-ayuda">Registrate para completar pedidos mas rapido y consultar tu historial por email.</p>
+            <form id="form-registro" class="form-cuenta">
+                <label>
+                    Nombre
+                    <input type="text" id="registro-nombre" placeholder="Juan Perez" required>
+                </label>
+                <label>
+                    Email
+                    <input type="email" id="registro-email" placeholder="juan@email.com" required>
+                </label>
+                <label>
+                    Contrasena
+                    <input type="password" id="registro-password" placeholder="Minimo 4 caracteres" required>
+                </label>
+                <button class="btn principal" type="submit">Crear cuenta</button>
+            </form>
+        </div>
+    </div>
 
     <script src="js/script.js"></script>
 </body>
